@@ -7,7 +7,7 @@ echo "Running unit tests..."
 
 cd "$(dirname "$0")/.."
 
-go test ./service -v -timeout 60s
+go test ./service -v -race -timeout 120s
 
 if [ $? -eq 0 ]; then
     echo "Unit tests completed successfully"

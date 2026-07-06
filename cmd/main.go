@@ -1,13 +1,57 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"mcdonalds-order-controller/service"
 	"os"
-	"strings"
 	"time"
 )
+
+func runSimulation(controller *service.OrderController) {
+	controller.Log("Starting simulation...")
+
+	// Requirement 1 & 2: Create orders (Normal and VIP priority test)
+	controller.AddNormalOrder()
+	controller.AddVIPOrder()
+	controller.AddNormalOrder()
+	controller.AddVIPOrder()
+	time.Sleep(1 * time.Second)
+
+	// Requirement 4 & 5: Add bots and process orders
+	controller.AddBot()
+	time.Sleep(1 * time.Second)
+	controller.AddBot()
+	time.Sleep(1 * time.Second)
+
+	// Wait for all orders to complete (each order takes 10 seconds)
+	time.Sleep(12 * time.Second)
+
+	// Show status after all orders completed
+	controller.LogStatus()
+	time.Sleep(1 * time.Second)
+
+	// Test bot removal while idle (remove one bot, keep one)
+	controller.RemoveBot()
+	time.Sleep(1 * time.Second)
+
+	// Test creating new orders with remaining bot
+	controller.AddNormalOrder()
+	controller.AddVIPOrder()
+	time.Sleep(1 * time.Second)
+
+	// Wait for final orders to complete
+	time.Sleep(12 * time.Second)
+
+	// Show final status before cleanup
+	controller.LogStatus()
+	time.Sleep(1 * time.Second)
+
+	// Clean up: remove remaining bots
+	controller.RemoveBot()
+	time.Sleep(1 * time.Second)
+
+	controller.Log("Shutting down...")
+}
 
 func main() {
 	controller, err := service.NewOrderController("scripts/result.txt")
@@ -19,34 +63,7 @@ func main() {
 
 	service.PrintHelp()
 
-	scanner := bufio.NewScanner(os.Stdin)
-	for {
-		fmt.Print("> ")
-		if !scanner.Scan() {
-			break
-		}
+	runSimulation(controller)
 
-		input := strings.TrimSpace(strings.ToLower(scanner.Text()))
-
-		switch input {
-		case "n":
-			controller.AddNormalOrder()
-		case "v":
-			controller.AddVIPOrder()
-		case "+":
-			controller.AddBot()
-		case "-":
-			controller.RemoveBot()
-		case "s":
-			controller.LogStatus()
-		case "h":
-			service.PrintHelp()
-		case "q", "quit", "exit":
-			controller.Log("Shutting down...")
-			time.Sleep(25 * time.Second)
-			return
-		default:
-			fmt.Println("Unknown command. Type 'h' for help.")
-		}
-	}
+	time.Sleep(2 * time.Second)
 }

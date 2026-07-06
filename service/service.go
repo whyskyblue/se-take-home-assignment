@@ -105,7 +105,7 @@ func (oc *OrderController) AddNormalOrder() {
 
 	oc.orders = append(oc.orders, order)
 	oc.Log("Created Normal Order #%d - Status: PENDING", order.ID)
-	oc.LogStatus()
+	oc.logStatusWithLock()
 
 	oc.notifyIdleBots()
 }
@@ -138,7 +138,7 @@ func (oc *OrderController) AddVIPOrder() {
 	oc.orders = newOrders
 
 	oc.Log("Created VIP Order #%d - Status: PENDING", order.ID)
-	oc.LogStatus()
+	oc.logStatusWithLock()
 
 	oc.notifyIdleBots()
 }
@@ -158,7 +158,7 @@ func (oc *OrderController) AddBot() {
 	oc.bots = append(oc.bots, bot)
 
 	oc.Log("Bot #%d created - Status: ACTIVE", bot.ID)
-	oc.LogStatus()
+	oc.logStatusWithLock()
 
 	go oc.processOrders(bot)
 }
@@ -180,9 +180,9 @@ func (oc *OrderController) notifyIdleBots() {
 
 func (oc *OrderController) RemoveBot() {
 	oc.mu.Lock()
-	defer oc.mu.Unlock()
 
 	if len(oc.bots) == 0 {
+		oc.mu.Unlock()
 		oc.Log("No bots to remove")
 		return
 	}
@@ -216,8 +216,10 @@ func (oc *OrderController) RemoveBot() {
 		newOrders = append(newOrders, oc.orders[insertPos:]...)
 		oc.orders = newOrders
 
+		oc.mu.Unlock()
 		oc.Log("Bot #%d destroyed while PROCESSING order #%d - Order returned to PENDING", bot.ID, order.ID)
 	} else {
+		oc.mu.Unlock()
 		oc.Log("Bot #%d destroyed while IDLE", bot.ID)
 	}
 
@@ -226,6 +228,9 @@ func (oc *OrderController) RemoveBot() {
 
 func (oc *OrderController) processOrders(bot *Bot) {
 	for {
+		var order *Order
+		var shouldLog bool
+
 		oc.mu.Lock()
 
 		if len(oc.bots) == 0 || !oc.botExists(bot.ID) {
@@ -248,8 +253,9 @@ func (oc *OrderController) processOrders(bot *Bot) {
 			}
 		}
 
-		order := oc.orders[0]
+		order = oc.orders[0]
 		oc.orders = oc.orders[1:]
+		shouldLog = true
 
 		bot.mu.Lock()
 		bot.IsProcessing = true
@@ -259,8 +265,10 @@ func (oc *OrderController) processOrders(bot *Bot) {
 
 		oc.mu.Unlock()
 
-		oc.Log("Bot #%d picked up %s Order #%d - Status: PROCESSING", bot.ID, order.Type, order.ID)
-		oc.LogStatus()
+		if shouldLog {
+			oc.Log("Bot #%d picked up %s Order #%d - Status: PROCESSING", bot.ID, order.Type, order.ID)
+			oc.LogStatus()
+		}
 
 		select {
 		case <-time.After(10 * time.Second):
@@ -271,7 +279,9 @@ func (oc *OrderController) processOrders(bot *Bot) {
 			bot.CurrentOrder = nil
 			bot.mu.Unlock()
 
+			oc.mu.Lock()
 			oc.completedCount++
+			oc.mu.Unlock()
 			oc.Log("Bot #%d completed %s Order #%d - Status: COMPLETE (Processing time: %.0fs)", bot.ID, completedOrder.Type, completedOrder.ID, processingTime)
 			oc.LogStatus()
 
@@ -321,6 +331,12 @@ func (oc *OrderController) botExists(botID int) bool {
 }
 
 func (oc *OrderController) LogStatus() {
+	oc.mu.RLock()
+	defer oc.mu.RUnlock()
+	oc.logStatusWithLock()
+}
+
+func (oc *OrderController) logStatusWithLock() {
 	pendingOrders := make([]string, len(oc.orders))
 	for i, o := range oc.orders {
 		pendingOrders[i] = fmt.Sprintf("#%d(%s)", o.ID, o.Type)

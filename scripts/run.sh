@@ -9,16 +9,7 @@ cd "$(dirname "$0")/.."
 
 chmod +x ./order-controller
 
-./order-controller <<EOF
-+
-n
-v
-n
-v
-+
-s
-q
-EOF
+./order-controller
 
 if [ $? -eq 0 ]; then
     echo "CLI application execution completed"
