@@ -1,26 +1,40 @@
-McDonald's Order Management System - Simulation Results
+[18:15:29] McDonald's Order Management System - Simulation Results
 
-[14:32:01] System initialized with 0 bots
-[14:32:01] Created Normal Order #1001 - Status: PENDING
-[14:32:02] Created VIP Order #1002 - Status: PENDING
-[14:32:02] Created Normal Order #1003 - Status: PENDING
-[14:32:03] Bot #1 created - Status: ACTIVE
-[14:32:03] Bot #1 picked up VIP Order #1002 - Status: PROCESSING
-[14:32:04] Bot #2 created - Status: ACTIVE
-[14:32:04] Bot #2 picked up Normal Order #1001 - Status: PROCESSING
-[14:32:13] Bot #1 completed VIP Order #1002 - Status: COMPLETE (Processing time: 10s)
-[14:32:13] Bot #1 picked up Normal Order #1003 - Status: PROCESSING
-[14:32:14] Bot #2 completed Normal Order #1001 - Status: COMPLETE (Processing time: 10s)
-[14:32:14] Bot #2 is now IDLE - No pending orders
-[14:32:15] Created VIP Order #1004 - Status: PENDING
-[14:32:15] Bot #2 picked up VIP Order #1004 - Status: PROCESSING
-[14:32:23] Bot #1 completed Normal Order #1003 - Status: COMPLETE (Processing time: 10s)
-[14:32:25] Bot #2 completed VIP Order #1004 - Status: COMPLETE (Processing time: 10s)
-[14:32:25] Bot #2 destroyed while IDLE
-[14:32:26] Bot #1 is now IDLE - No pending orders
-
+[18:15:29] System initialized with 0 bots
+[18:15:29] Bot #1 created - Status: ACTIVE
+[18:15:29] Queue: [0 pending] | Bots: [0 active, 1 idle, 1 total]
+[18:15:29] Created Normal Order #1 - Status: PENDING
+[18:15:29] Queue: [1 pending] | Bots: [0 active, 1 idle, 1 total]
+[18:15:29] Created VIP Order #2 - Status: PENDING
+[18:15:29] Queue: [2 pending] | Bots: [0 active, 1 idle, 1 total]
+[18:15:29] Created Normal Order #3 - Status: PENDING
+[18:15:29] Queue: [3 pending] | Bots: [0 active, 1 idle, 1 total]
+[18:15:29] Created VIP Order #4 - Status: PENDING
+[18:15:29] Queue: [4 pending] | Bots: [0 active, 1 idle, 1 total]
+[18:15:29] Bot #2 created - Status: ACTIVE
+[18:15:29] Queue: [4 pending] | Bots: [0 active, 2 idle, 2 total]
+[18:15:29] Queue: [4 pending] | Bots: [0 active, 2 idle, 2 total]
+[18:15:29] Shutting down...
+[18:15:29] Bot #1 picked up VIP Order #4 - Status: PROCESSING
+[18:15:29] Queue: [2 pending] | Bots: [2 active, 0 idle, 2 total]
+[18:15:29] Bot #2 picked up VIP Order #2 - Status: PROCESSING
+[18:15:29] Queue: [2 pending] | Bots: [2 active, 0 idle, 2 total]
+[18:15:39] Bot #2 completed VIP Order #2 - Status: COMPLETE (Processing time: 10s)
+[18:15:39] Bot #1 completed VIP Order #4 - Status: COMPLETE (Processing time: 10s)
+[18:15:39] Queue: [2 pending] | Bots: [0 active, 2 idle, 2 total]
+[18:15:39] Bot #2 picked up Normal Order #1 - Status: PROCESSING
+[18:15:39] Queue: [1 pending] | Bots: [1 active, 1 idle, 2 total]
+[18:15:39] Queue: [1 pending] | Bots: [1 active, 1 idle, 2 total]
+[18:15:39] Bot #1 picked up Normal Order #3 - Status: PROCESSING
+[18:15:39] Queue: [0 pending] | Bots: [2 active, 0 idle, 2 total]
+[18:15:49] Bot #2 completed Normal Order #1 - Status: COMPLETE (Processing time: 10s)
+[18:15:49] Queue: [0 pending] | Bots: [0 active, 2 idle, 2 total]
+[18:15:49] Bot #1 completed Normal Order #3 - Status: COMPLETE (Processing time: 10s)
+[18:15:49] Queue: [0 pending] | Bots: [0 active, 2 idle, 2 total]
+[18:15:54] 
 Final Status:
-- Total Orders Processed: 4 (2 VIP, 2 Normal)
-- Orders Completed: 4
-- Active Bots: 1
-- Pending Orders: 0
+[18:15:54] - Total Orders Created: 4 (2 VIP, 2 Normal)
+[18:15:54] - Orders Completed: 4
+[18:15:54] - Orders Pending: 0 (0 VIP, 0 Normal)
+[18:15:54] - Active Bots: 0
+[18:15:54] - Total Bots: 2
